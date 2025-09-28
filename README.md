@@ -1,13 +1,14 @@
 # BGE Visualized JAX
 
-A JAX/Flax NNX implementation of the BGE Visualized multimodal embedding model.
-
+A [JAX/Flax NNX](https://flax.readthedocs.io/en/v0.8.3/experimental/nnx/index.html) implementation of the [BGE Visualized](https://huggingface.co/BAAI/bge-visualized) multimodal embedding model.
 ## Overview
 
 BGE Visualized is a multimodal early fusion embedding model that combines:
-- **Vision Encoder**: EVA02-CLIP-B-16 for image processing
-- **Text Encoder**: BGE-base-en-v1.5 for text processing  
-- **Fusion Layer**: Multimodal integration producing 768-dimensional embeddings
+- **Vision Encoder**: [EVA02-CLIP-B-16](https://arxiv.org/pdf/2303.15389), [CLIP](https://github.com/openai/CLIP) for producing image patch embeddings.
+- **Text Encoder**: [BGE-base-en-v1.5](https://huggingface.co/BAAI/bge-base-en-v1.5), a BERT-like transformer for text embeddings.
+- **Visual Projection Layer**: Image patch embeddings are projected into the text encoder's word embedding space, allowing the model to process both modalities jointly.
+
+Early fusion enables the model to capture fine-grained interactions between image patches and text tokens through attention layers, rather than treating them separately until the last output layer. See [my article on multimodal fusion](https://www.solenya.ai/blog/14-true-multimodality) for more details.
 
 This implementation ports the original PyTorch model to JAX using Flax NNX for improved performance and functional programming benefits.
 
@@ -41,12 +42,7 @@ This project uses [uv](https://github.com/astral-sh/uv) for fast Python package 
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Create virtual environment and install dependencies
-uv venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-uv pip install -e .
-
-# Or install with development dependencies
-uv pip install -e ".[dev]"
+uv sync --extra dev
 ```
 
 ### Alternative with Make
@@ -78,21 +74,6 @@ image_embeddings = model.encode_image(images)
 # Multimodal encoding
 multimodal_embeddings = model.encode_multimodal(images, input_ids, attention_mask)
 ```
-
-## Development Status
-
-This is an initial implementation with the following components:
-
-✅ **Completed:**
-- Project structure and configuration
-- Core model interfaces and placeholders
-- Weight conversion framework
-- Basic utility functions
-
-🚧 **In Progress:**
-- Component implementations (vision, text, fusion)
-- Weight conversion logic
-- Comprehensive testing
 
 ## Requirements
 
